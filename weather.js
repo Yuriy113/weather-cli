@@ -18,9 +18,23 @@ const saveToken = async (token) => {
   }
 }
 
+const getForecast = async () => {
+  try {
+    const weather = await getWeather(process.env.CITY);
+    console.log(weather);
+  } catch (e) {
+    if (e?.response?.status == 404) {
+      printError('Неверно указан город');
+    } else if (e?.response?.status == 401){
+      printError('Неверно указан токен');
+    } else {
+      printError(e.message);
+    }
+  }
+}
+
 const initCLI = () => { // создаем стрелочную функцию initCLI
   const args = getArgs(process.argv); // в переменную args присваиваем результат выполнения импортированной функции, с переданным в нее массивом process.argv
-  // console.log(process.env);
   if (args.h) {
     printHelp();
   }
@@ -30,8 +44,7 @@ const initCLI = () => { // создаем стрелочную функцию in
   if (args.t) {
     return saveToken(args.t);
   }
-  getWeather('moscow');
-  // вывести погоду
+  getForecast()
 };
 
 initCLI();
